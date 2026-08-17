@@ -131,7 +131,7 @@ func (p *Postgres) AuditHead(ctx context.Context, id string) (string, error) {
 
 func (p *Postgres) RiskFacts(ctx context.Context, window domain.RiskWindow) (domain.RiskFacts, error) {
 	facts := domain.RiskFacts{}
-	if err := p.scanPayloads(ctx, "select payload from specifications where status in ('effective','approved','scheduled')", func(payload []byte) error {
+	if err := p.scanPayloads(ctx, "select payload from specifications where status in ('effective','approved','scheduled','replaced','rolled_back')", func(payload []byte) error {
 		var value domain.Specification
 		if err := json.Unmarshal(payload, &value); err != nil {
 			return err

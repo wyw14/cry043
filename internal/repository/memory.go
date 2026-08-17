@@ -166,7 +166,9 @@ func (m *Memory) RiskFacts(ctx context.Context, _ domain.RiskWindow) (domain.Ris
 	}
 	facts := domain.RiskFacts{}
 	for _, spec := range m.specs {
-		facts.Specifications = append(facts.Specifications, spec.Clone())
+		copy := spec.Clone()
+		copy.Scope.ProcessIDs = nil
+		facts.Specifications = append(facts.Specifications, copy)
 	}
 	for _, ack := range m.acks {
 		facts.Acknowledgements = append(facts.Acknowledgements, ack)
