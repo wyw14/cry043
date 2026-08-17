@@ -77,6 +77,11 @@ type ActivationReadiness struct {
 }
 
 func ScopeMatches(window RiskWindow, scope Scope) bool {
-	return window.AreaID == "" || slices.Contains(scope.AreaIDs, window.AreaID) ||
-		window.ProcessID == "" || slices.Contains(scope.ProcessIDs, window.ProcessID)
+	if window.AreaID != "" && !slices.Contains(scope.AreaIDs, window.AreaID) {
+		return false
+	}
+	if window.ProcessID != "" && !slices.Contains(scope.ProcessIDs, window.ProcessID) {
+		return false
+	}
+	return true
 }

@@ -60,7 +60,7 @@ func (s *RiskService) Board(ctx context.Context, areaID, processID string, horiz
 	}
 
 	for _, exception := range facts.Exceptions {
-		if exception.ApprovedAt != nil && !exception.ExpiresAt.After(window.HorizonEnd) {
+		if exception.Active(now) && !exception.ExpiresAt.After(window.HorizonEnd) {
 			spec := findSpecification(facts.Specifications, exception.SpecificationID)
 			if spec.ID == "" || !domain.ScopeMatches(window, spec.Scope) {
 				continue
@@ -163,7 +163,7 @@ func acknowledgedTeams(values []domain.Acknowledgement) map[string]bool {
 }
 
 func confirmationKey(specificationID string, version int, teamID string) string {
-	return fmt.Sprintf("%s:%s", specificationID, teamID)
+	return fmt.Sprintf("%s:%d:%s", specificationID, version, teamID)
 }
 
 func findSpecification(specifications []domain.Specification, id string) domain.Specification {
