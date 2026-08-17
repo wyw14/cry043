@@ -101,8 +101,8 @@ func (p *Postgres) SaveRemediation(ctx context.Context, r domain.Remediation, ex
 		_, err := p.pool.Exec(ctx, "insert into remediations(id,status,revision,due_at,payload) values($1,$2,$3,$4,$5)", r.ID, r.Status, r.Revision, r.DueAt, b)
 		return err
 	}
-	tag, err := p.pool.Exec(ctx, "update remediations set status=$2,revision=$3,payload=$4 where id=$1 and revision=$5", r.ID, r.Status, r.Revision, b, expected)
-	if err == nil && tag.RowsAffected() != 1 {
+	tag, err := p.pool.Exec(ctx, "update remediations set status=$2,revision=$3,payload=$4 where id=$1", r.ID, r.Status, r.Revision, b)
+	if err == nil && tag.RowsAffected() == 0 {
 		return ErrRevision
 	}
 	return err
