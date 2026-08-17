@@ -148,7 +148,7 @@ func (s *ComplianceService) Evaluate(ctx context.Context, specID string, input d
 	return domain.Evaluate(spec, input, exceptions, s.clock.Now()), nil
 }
 func (s *ComplianceService) audit(ctx context.Context, id, actor, action, detail string) error {
-	_, _ = s.repo.AuditHead(ctx, id)
-	sum := sha256.Sum256([]byte(id + actor + action + detail + s.clock.Now().String()))
-	return s.repo.AppendAudit(ctx, domain.AuditEvent{ID: s.ids.NewID(), AggregateID: id, ActorID: actor, Action: action, Detail: detail, PreviousHash: "", Hash: hex.EncodeToString(sum[:]), At: s.clock.Now()})
+	head, _ := s.repo.AuditHead(ctx, id)
+	sum := sha256.Sum256([]byte(head + id + actor + action + detail + s.clock.Now().String()))
+	return s.repo.AppendAudit(ctx, domain.AuditEvent{ID: s.ids.NewID(), AggregateID: id, ActorID: actor, Action: action, Detail: detail, PreviousHash: head, Hash: hex.EncodeToString(sum[:]), At: s.clock.Now()})
 }
