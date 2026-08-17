@@ -20,7 +20,7 @@ func (p *Postgres) SaveSpecification(ctx context.Context, s domain.Specification
 			return s, err
 		}
 	} else {
-		tag, err := p.pool.Exec(ctx, "update specifications set status=$2,revision=$3,payload=$4 where id=$1", s.ID, s.Status, s.Revision, b)
+		tag, err := p.pool.Exec(ctx, "update specifications set status=$2,revision=$3,payload=$4 where id=$1 and revision=$5", s.ID, s.Status, s.Revision, b, expected)
 		if err != nil {
 			return s, err
 		}
