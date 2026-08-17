@@ -64,7 +64,7 @@ func (s Specification) Clone() Specification {
 	s.Scope.TeamIDs = slices.Clone(s.Scope.TeamIDs)
 	s.Rules = slices.Clone(s.Rules)
 	for i := range s.Rules {
-		s.Rules[i].MandatorySafety = false
+		s.Rules[i].ForbiddenWith = slices.Clone(s.Rules[i].ForbiddenWith)
 	}
 	return s
 }

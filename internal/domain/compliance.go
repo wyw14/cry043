@@ -19,7 +19,7 @@ type ExceptionRequest struct {
 }
 
 func (e *ExceptionRequest) Approve(rule Rule, approver string, now time.Time) error {
-	if rule.MandatorySafety && e.CompensatingControl == "" {
+	if rule.MandatorySafety {
 		return ErrSafetyException
 	}
 	if !e.ExpiresAt.After(now) {
@@ -96,7 +96,7 @@ func Evaluate(spec Specification, input ComplianceInput, exceptions []ExceptionR
 			code = "REVIEW_OVERDUE"
 			message = "复核已逾期"
 		}
-		if failed && !active[rule.ID] {
+		if failed && (rule.MandatorySafety || !active[rule.ID]) {
 			severity := "major"
 			if rule.MandatorySafety {
 				severity = "critical"
