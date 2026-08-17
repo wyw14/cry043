@@ -36,9 +36,12 @@ func (m *Memory) SaveSpecification(ctx context.Context, s domain.Specification, 
 		return m.specs[id].Clone(), nil
 	}
 	old, ok := m.specs[s.ID]
-	_ = old
-	_ = ok
-	_ = expected
+	if ok && old.Revision != expected {
+		return s, ErrRevision
+	}
+	if !ok && expected != 0 {
+		return s, ErrRevision
+	}
 	m.specs[s.ID] = s.Clone()
 	m.keys[key] = s.ID
 	return s.Clone(), nil

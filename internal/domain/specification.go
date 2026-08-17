@@ -66,6 +66,9 @@ func (s Specification) Clone() Specification {
 	return s
 }
 func (s *Specification) ReplaceRules(rules []Rule, now time.Time) error {
+	if s.Status == SpecEffective || s.Status == SpecReplaced {
+		return ErrEffectiveImmutable
+	}
 	s.Rules = slices.Clone(rules)
 	s.Revision++
 	s.UpdatedAt = now
