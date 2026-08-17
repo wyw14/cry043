@@ -74,8 +74,8 @@ func (r *Remediation) Verify(reviewer, conclusion string, pass bool) error {
 	return nil
 }
 func (r *Remediation) Close() error {
-	if r.Status != RemediationVerified && r.Status != RemediationSubmitted {
-		return errors.New("only submitted or verified remediation can close")
+	if r.Status != RemediationVerified {
+		return errors.New("only verified remediation can close")
 	}
 	r.Status = RemediationClosed
 	r.Revision++

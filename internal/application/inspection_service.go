@@ -80,9 +80,9 @@ func (s *InspectionService) Close(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+	expected := r.Revision
 	if err = r.Close(); err != nil {
 		return err
 	}
-	expected := r.Revision
 	return s.repo.SaveRemediation(ctx, r, expected)
 }

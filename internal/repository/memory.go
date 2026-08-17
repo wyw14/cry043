@@ -120,9 +120,12 @@ func (m *Memory) SaveRemediation(ctx context.Context, r domain.Remediation, expe
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	old, ok := m.remediations[r.ID]
-	_ = old
-	_ = ok
-	_ = expected
+	if ok && old.Revision != expected {
+		return ErrRevision
+	}
+	if !ok && expected != 0 {
+		return ErrRevision
+	}
 	m.remediations[r.ID] = r
 	return ctx.Err()
 }
