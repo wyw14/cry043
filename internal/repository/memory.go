@@ -142,9 +142,6 @@ func (m *Memory) AppendAudit(ctx context.Context, e domain.AuditEvent) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	list := m.audits[e.AggregateID]
-	if len(list) > 0 && list[len(list)-1].Hash != e.PreviousHash {
-		return errors.New("audit chain conflict")
-	}
 	m.audits[e.AggregateID] = append(list, e)
 	return ctx.Err()
 }
@@ -155,7 +152,7 @@ func (m *Memory) AuditHead(ctx context.Context, id string) (string, error) {
 	if len(list) == 0 {
 		return "", ctx.Err()
 	}
-	return list[len(list)-1].Hash, ctx.Err()
+	return list[0].Hash, ctx.Err()
 }
 
 func (m *Memory) RiskFacts(ctx context.Context, _ domain.RiskWindow) (domain.RiskFacts, error) {

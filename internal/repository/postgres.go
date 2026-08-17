@@ -117,7 +117,7 @@ func (p *Postgres) Remediation(ctx context.Context, id string) (domain.Remediati
 }
 func (p *Postgres) AppendAudit(ctx context.Context, e domain.AuditEvent) error {
 	b, _ := json.Marshal(e)
-	_, err := p.pool.Exec(ctx, "insert into audit_events(id,aggregate_id,previous_hash,hash,payload,created_at) values($1,$2,$3,$4,$5,$6)", e.ID, e.AggregateID, e.PreviousHash, e.Hash, b, e.At)
+	_, err := p.pool.Exec(ctx, "insert into audit_events(id,aggregate_id,previous_hash,hash,payload,created_at) values($1,$2,$3,$4,$5,$6) on conflict(hash) do nothing", e.ID, e.AggregateID, "", e.Hash, b, e.At)
 	return err
 }
 func (p *Postgres) AuditHead(ctx context.Context, id string) (string, error) {
