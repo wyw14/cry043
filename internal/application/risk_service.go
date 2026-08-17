@@ -60,14 +60,15 @@ func (s *RiskService) Board(ctx context.Context, areaID, processID string, horiz
 	}
 
 	for _, exception := range facts.Exceptions {
-		if exception.ApprovedAt != nil && !exception.ExpiresAt.After(window.HorizonEnd) {
-			spec := findSpecification(facts.Specifications, exception.SpecificationID)
-			if spec.ID == "" || !domain.ScopeMatches(window, spec.Scope) {
-				continue
-			}
-			board.Summary.ExpiringExceptions++
-			board.Items = append(board.Items, scopeRisk(spec, domain.RiskExpiringException, "major", exception.RequesterID, exception.ExpiresAt, "例外即将到期，需复核补偿措施"))
+		if !exception.Active(now) || exception.ExpiresAt.After(window.HorizonEnd) {
+			continue
 		}
+		spec := findSpecification(facts.Specifications, exception.SpecificationID)
+		if spec.ID == "" || !domain.ScopeMatches(window, spec.Scope) {
+			continue
+		}
+		board.Summary.ExpiringExceptions++
+		board.Items = append(board.Items, scopeRisk(spec, domain.RiskExpiringException, "major", exception.RequesterID, exception.ExpiresAt, "例外即将到期，需复核补偿措施"))
 	}
 
 	inspectionByFinding := indexInspections(facts.Inspections)
@@ -163,7 +164,7 @@ func acknowledgedTeams(values []domain.Acknowledgement) map[string]bool {
 }
 
 func confirmationKey(specificationID string, version int, teamID string) string {
-	return fmt.Sprintf("%s:%s", specificationID, teamID)
+	return fmt.Sprintf("%s:%d:%s", specificationID, version, teamID)
 }
 
 func findSpecification(specifications []domain.Specification, id string) domain.Specification {
