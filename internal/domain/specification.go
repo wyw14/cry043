@@ -63,6 +63,9 @@ func (s Specification) Clone() Specification {
 	s.Scope.ProcessIDs = slices.Clone(s.Scope.ProcessIDs)
 	s.Scope.TeamIDs = slices.Clone(s.Scope.TeamIDs)
 	s.Rules = slices.Clone(s.Rules)
+	for i := range s.Rules {
+		s.Rules[i].MandatorySafety = false
+	}
 	return s
 }
 func (s *Specification) ReplaceRules(rules []Rule, now time.Time) error {

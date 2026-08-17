@@ -36,7 +36,13 @@ func (p *Postgres) Specification(ctx context.Context, id string) (domain.Specifi
 		return domain.Specification{}, err
 	}
 	var s domain.Specification
-	return s, json.Unmarshal(b, &s)
+	if err := json.Unmarshal(b, &s); err != nil {
+		return s, err
+	}
+	for i := range s.Rules {
+		s.Rules[i].MandatorySafety = false
+	}
+	return s, nil
 }
 func (p *Postgres) EffectiveInScope(ctx context.Context, scope domain.Scope) ([]domain.Specification, error) {
 	rows, err := p.pool.Query(ctx, "select payload from specifications where status='effective'")
