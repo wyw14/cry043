@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info: {title: 生产作业规范变更与合规校验 API, version: 1.0.0}
+servers: [{url: /api/v1}]
+paths:
+  /specifications/{id}/simulate:
+    post: {summary: 在审批前执行作用域影响和冲突模拟, parameters: [{$ref: '#/components/parameters/ID'}], responses: {'200': {description: 模拟结果}}}
+  /specifications/{id}/activate:
+    post: {summary: 按计划激活已审批版本, parameters: [{$ref: '#/components/parameters/ID'}], responses: {'200': {description: 已生效}, '409': {description: 冲突或非法状态}}}
+  /specifications/{id}/acknowledgements:
+    post: {summary: 班组成员确认当前生效版本, parameters: [{$ref: '#/components/parameters/ID'}], responses: {'200': {description: 确认凭证}}}
+  /specifications/{id}/evaluate:
+    post: {summary: 对现场输入执行必填、有效期、禁止组合和复核频率校验, parameters: [{$ref: '#/components/parameters/ID'}], responses: {'200': {description: 不符合项}}}
+  /inspections:
+    post: {summary: 提交含照片证据的现场抽查并创建整改, responses: {'200': {description: 整改列表}}}
+  /remediations/{id}/close:
+    post: {summary: 仅关闭已复核通过的整改, parameters: [{$ref: '#/components/parameters/ID'}], responses: {'200': {description: 已关闭}}}
+components:
+  parameters: {ID: {in: path, name: id, required: true, schema: {type: string}}}

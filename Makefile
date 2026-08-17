@@ -1,0 +1,13 @@
+.PHONY: build test race vet web up
+build:
+	go build ./...
+test:
+	go test ./...
+race:
+	go test -race ./...
+vet:
+	go vet ./...
+web:
+	cd web && npm ci && npm test && npm run build
+up:
+	docker compose up --build

@@ -1,0 +1,10 @@
+.env
+var/
+web/node_modules/
+web/dist/
+bin/
+*.log
+.gocache/
+.gomodcache/
+.codex/
+.claude/
