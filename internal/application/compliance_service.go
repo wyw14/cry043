@@ -117,7 +117,6 @@ func (s *ComplianceService) ApproveException(ctx context.Context, id string, e d
 	if !found {
 		return errors.New("rule not found")
 	}
-	rule.MandatorySafety = false
 	if err = e.Approve(rule, approver, s.clock.Now()); err != nil {
 		return err
 	}
